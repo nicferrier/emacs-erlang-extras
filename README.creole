@@ -1,0 +1,8 @@
+some extra erlang stuff for Emacs.
+
+I noticed that Emacs erlang stuff wasn't up to date with latest erlang
+stuff. Particularly, there was no way of
+using [https://github.com/yrashk/kerl](kerl) to use different erlang
+installations.
+
+This is some noodling to help with those extra things in erlang.

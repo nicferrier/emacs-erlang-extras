@@ -77,25 +77,50 @@ exec ${erlangexe#.erl-}
       "u+x" (file-modes script-name)))
     script-name))
 
-;; maybe we can use this directly off an `erlang-mode-hook'
-(defun erlh-hack-env ()
-  "Hack the erl environment with kerl."
-  (interactive
-   (let ((installs
+(defun erlh/find-kerl-root ()
+  "Find the current kerl/erlang root. 
+
+Uses `erlh-kerl-installs-dir' and `erlh-kerl-installs-pattern'
+and asks the user if there is more than one."
+  ;; FIXME we could improve this by having per-project erlang install
+  ;; roots as well
+  ;;
+  ;; something like:
+  ;;
+  ;; (find-file (expand-file-name ".kerl-root" (locate-dominating-file)))
+  (let ((installs
           (directory-files
            erlh-kerl-installs-dir  nil
-           erlh-kerl-installs-pattern))))
-   (cond 
-     ((< (length installs) 2)
-      (car installs))
-     ((> (length installs) 1)
-      (read-file-name
-       "erlang base dir: " erlh-kerl-installs-dir
-       nil t nil
-       (lambda (candidate) (string-match-p erlh-kerl-installs-pattern candidate))))
-     (t (error "you must have an erlang installation."))))
+           erlh-kerl-installs-pattern)))
+    (cond 
+      ((< (length installs) 2)
+       (car installs))
+      ((> (length installs) 1)
+       (read-file-name
+        "erlang base dir: " erlh-kerl-installs-dir
+        nil t nil
+        (lambda (candidate) (string-match-p erlh-kerl-installs-pattern candidate))))
+      (t (error "you must have an erlang installation.")))))
+
+;; maybe we can use this directly off an `erlang-mode-hook'
+(defun erlh-hack-env (&optional kerl-root)
+  "Hack the erl environment with kerl.
+
+This is like flet for the erlang environment in Emacs.  It
+injects the kerl environment into the erlang tools by replacing
+the erlang tools with a BASH shell script that sources the kerl
+environment script and then runs the specified erlang tool.  It
+symlink bombs your current directory with links to that shell
+script for each erlang tool, but they are at least all
+namespaced."
+  (interactive (list (erlh/find-kerl-root)))
+  (unless kerl-root
+    (setq kerl-root (erlh/find-kerl-root)))
   (make-variable-buffer-local 'erlang-root-dir)
-  (setq erlang-root-dir erlh-env-dir)
+  (setq erlang-root-dir kerl-root)
+  ;; Make the script we will use for exec-ing all erlang tools
+  (unless (file-exists-p (expand-file-name ".erl"))
+    (erlh/make-script kerl-root))
   (make-variable-buffer-local 'inferior-erlang-machine)
   (--map
    (let* ((prog-name (symbol-value it))

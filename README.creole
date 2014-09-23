@@ -6,3 +6,57 @@ using [https://github.com/yrashk/kerl](kerl) to use different erlang
 installations.
 
 This is some noodling to help with those extra things in erlang.
+
+
+=== getting going in erlang ===
+
+Install erlh (this repo) - erlang mode comes with emacs
+
+Download kerl from the kerl project
+
+Save this as a ~/.kerlrc 
+
+{{{
+# kerl rc file controlling what happens for builds
+KERL_INSTALL_MANPAGES=yes
+KERL_INSTALL_HTMLDOCS=yes
+}}}
+
+mkdir for kerl erlang installations, say: ~/source/kerl-erlangs
+
+Use kerl to get, build and install one or more erlangs into ~/source/kerl-erlangs
+
+customize-variable erlh-kerl-installs-dir  to say where the root of
+your kerl installations is (eg: ~/source/kerl-erlangs)
+
+and customize-variable erlh-kerl-installs-pattern to a regex that will
+match any erlang installed there [[note what's this for??]]
+
+C-x C-f a new .erl file (maybe in a directory you'll use for the project)
+
+You should now be able to use {{{C-c C-z}}} to get an erlang shell and
+{{{C-#}}} to use the erlang man function.
+
+=== what is erlh-kerl-installs-pattern for?? ===
+
+If you set erlh-kerl-installs-dir to a directory you keep other things
+than erlang installs in then you will need to distinguish them from
+each other. This pattern let's you do that.
+
+Suppose you have an erlh-kerl-installs-dir of ~/sources (as I do):
+
+{{{
+emacs-src
+emacs-v4-src
+guile
+go-lang
+kerl
+erlang-r16b02
+erlang-17_1
+}}}
+
+When I choose an erlang installation I don't want to pick a name from
+that directory, I want to choose just erlang installs. The pattern
+let's me do that. Maybe there's a way of eliminating that by using
+kerl to tell us.
+

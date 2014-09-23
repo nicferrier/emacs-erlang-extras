@@ -2,8 +2,11 @@
 
 ;; Copyright (C) 2014  Nic Ferrier
 
+;; Created: Tue Sep 23 13:23:34 BST 2014
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: languages
+;; Package-Version: 0.0.1
+;; Package-requires: ((dash "2.3.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

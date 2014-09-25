@@ -89,18 +89,23 @@ and asks the user if there is more than one."
   ;;
   ;; (find-file (expand-file-name ".kerl-root" (locate-dominating-file)))
   (let ((installs
+         (--filter
+          (file-directory-p
+           (expand-file-name it erlh-kerl-installs-dir))
           (directory-files
            erlh-kerl-installs-dir  nil
-           erlh-kerl-installs-pattern)))
-    (cond 
-      ((< (length installs) 2)
-       (car installs))
-      ((> (length installs) 1)
-       (read-file-name
-        "erlang base dir: " erlh-kerl-installs-dir
-        nil t nil
-        (lambda (candidate) (string-match-p erlh-kerl-installs-pattern candidate))))
-      (t (error "you must have an erlang installation.")))))
+           erlh-kerl-installs-pattern))))
+    (expand-file-name 
+     (cond 
+       ((< (length installs) 2)
+        (car installs))
+       ((> (length installs) 1)
+        (read-file-name
+         "erlang base dir: " erlh-kerl-installs-dir
+         nil t nil
+         (lambda (candidate) (string-match-p erlh-kerl-installs-pattern candidate))))
+       (t (error "you must have an erlang installation.")))
+     erlh-kerl-installs-dir)))
 
 ;; maybe we can use this directly off an `erlang-mode-hook'
 (defun erlh-hack-env (&optional kerl-root)
@@ -132,6 +137,7 @@ namespaced."
          (make-symbolic-link ".erl" script-name))
      (set it (expand-file-name script-name)))
    (list 'inferior-erlang-machine))
+  ;; Now make the manuals work
   (erlang-man-init)
   (local-set-key (kbd "C-#") 'erlang-man-function))
 

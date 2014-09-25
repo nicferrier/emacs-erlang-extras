@@ -12,7 +12,7 @@ This is some noodling to help with those extra things in erlang.
 
 Install erlh (this repo) - erlang mode comes with emacs
 
-Download kerl from the [[https://github.com/yrashk/kerl|kerl kerl project]].
+Download kerl from the [[https://github.com/yrashk/kerl|kerl project]].
 
 Save this as a ~/.kerlrc 
 
